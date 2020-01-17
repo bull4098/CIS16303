@@ -89,7 +89,7 @@ public class ChangeJar {
         //Throws an error if the amount is not all digits or a decimal point
         for (int i = 0; i < amount.length(); i++){
             int decimalCount = 0;
-            if(Character.isDigit(amount.charAt(i)) || amount.charAt(i) != '.')
+            if(!Character.isDigit(amount.charAt(i)) && amount.charAt(i) != '.')
                 throw new IllegalArgumentException();
             if(amount.charAt(i) == '.')
                 decimalCount++;
@@ -402,9 +402,27 @@ public class ChangeJar {
 
 
     public static void main(String[] args) {
-        ChangeJar test = new ChangeJar(0,0,0,0);
-        System.out.println(test);
-        ChangeJar test2 = new ChangeJar(-1,0,0,0);
+        ChangeJar s = new ChangeJar("2.82");
+        System.out.println("2.82 Amount: \n" + s);
+
+        s = new ChangeJar("8");
+        System.out.println("8 Amount: \n" + s);
+
+        s = new ChangeJar(".28");
+        System.out.println(".28 Amount: \n" + s);
+
+        ChangeJar s1 = new ChangeJar();
+        System.out.println("0 Amount: \n" + s1);
+
+        s1.add(1,1,1,100);
+        System.out.println("1,1,1,100 Amount: \n" + s1);
+
+        ChangeJar s2 = new ChangeJar(41.99);
+        s2.add(0,0,0,99);
+        for (int i = 0; i < 100; i++)
+            s2.dec();
+        System.out.println("amount: \n" + s2);
+
     }
 
     public int getQuarters() {
