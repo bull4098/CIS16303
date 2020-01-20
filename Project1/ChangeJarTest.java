@@ -70,7 +70,7 @@ public class ChangeJarTest {
 	@Test
 	public void testPutIn() {
 		ChangeJar jar = new ChangeJar();
-		// jar.putIn(2,3,4,5);  // this line was commented because no putin method yet.
+		jar.add(2,3,4,5);  // this line was commented because no putin method yet.
 		assertEquals (2, jar.getQuarters());
 		assertEquals (3, jar.getDimes());
 		assertEquals (4, jar.getNickels());

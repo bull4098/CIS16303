@@ -14,7 +14,7 @@ import java.util.*;
  * 	 will need to comply with the Java Style Guide.
  * 	 HOWEVER,  HERE IS SOME STARTING CODE.
  *
- * @suthor
+ * @author Tim Nguyen
  */
 
 public class ChangeJar {
@@ -52,15 +52,13 @@ public class ChangeJar {
      * @param amount is the amount of money being put inside the ChangeJar
      */
     public ChangeJar(double amount){
-        if(amount < 0)
+        String stringAmount = "" + amount;
+        //Throws an error if there are too many digits beyond the decimal point
+        if(stringAmount.contains(".") && stringAmount.indexOf('.') - stringAmount.length() > 3)
             throw new IllegalArgumentException();
-        quarters = (int) (amount / 0.25);
-        amount -= quarters * 0.25;
-        dimes = (int) (amount / 0.10);
-        amount -= dimes * 0.10;
-        nickels = (int) (amount / 0.05);
-        amount -= nickels * 0.05;
-        pennies = (int) (amount / 0.01);
+
+        int temp = (int) (amount * 100);
+        this.convertToChange(temp);
     }
 
     /******************************************************************
@@ -72,6 +70,7 @@ public class ChangeJar {
      */
 
     public ChangeJar(ChangeJar other) {
+        changeCheck(other.quarters, other.dimes, other.nickels, other.pennies);
         quarters = other.quarters;
         dimes = other.dimes;
         nickels = other.nickels;
@@ -87,12 +86,13 @@ public class ChangeJar {
     public ChangeJar(String amount){
 
         //Throws an error if the amount is not all digits or a decimal point
+        int decimalCount = 0;
         for (int i = 0; i < amount.length(); i++){
-            int decimalCount = 0;
             if(!Character.isDigit(amount.charAt(i)) && amount.charAt(i) != '.')
                 throw new IllegalArgumentException();
             if(amount.charAt(i) == '.')
                 decimalCount++;
+
             //Cannot have more than one decimal point
             if(decimalCount > 1)
                 throw new IllegalArgumentException();
@@ -103,18 +103,8 @@ public class ChangeJar {
         if(amount.contains(".") && amount.indexOf('.') - amount.length() > 3)
             throw new IllegalArgumentException();
 
-        double temp = Double.parseDouble(amount);
-
-        if(temp < 0)
-            throw new IllegalArgumentException();
-
-        quarters = (int) (temp / 0.25);
-        temp -= quarters * 0.25;
-        dimes = (int) (temp / 0.10);
-        temp -= dimes * 0.10;
-        nickels = (int) (temp / 0.05);
-        temp -= nickels * 0.05;
-        pennies = (int) (temp / 0.01);
+        int temp = (int) (Double.parseDouble(amount) * 100);
+        this.convertToChange(temp);
     }
 
     /******************************************************************
@@ -129,9 +119,9 @@ public class ChangeJar {
      *                 
      */
     public ChangeJar(int quarters, int dimes, int nickels, int pennies) {
-        super();
+        //super();
 
-        errorFunds(quarters, dimes, nickels, pennies);
+        changeCheck(quarters, dimes, nickels, pennies);
 
         this.quarters = quarters;
         this.dimes = dimes;
@@ -151,6 +141,18 @@ public class ChangeJar {
         return (temp.quarters * 25) + (temp.dimes * 10) + (temp.nickels * 5) + temp.pennies;
     }
 
+    private void convertToChange (int amount){
+        if(amount < 0)
+            throw new IllegalArgumentException();
+        quarters = amount / 25;
+        amount -= quarters * 25;
+        dimes = amount / 10;
+        amount -= dimes * 10;
+        nickels = amount / 5;
+        amount -= nickels * 5;
+        pennies = amount;
+    }
+
     /******************************************************************
      *   Either turns on or off the ability to mutate ChangeJars
      * @param selected true if mutation is enabled, false if mutation is disabled
@@ -158,10 +160,6 @@ public class ChangeJar {
     public static void mutate(boolean selected) {
         mutation = selected;
     }
-
-    //public boolean equals(ChangeJar s) {
-    //    return true;
-    //}
 
     /******************************************************************
      *   Determines if "this" ChangeJar has the same amount as the input Object
@@ -174,8 +172,11 @@ public class ChangeJar {
                 ChangeJar temp = (ChangeJar) s;
                 return this.getAmount() == temp.getAmount();
             }
+            else
+                throw new IllegalArgumentException();
         }
-        return false;
+        else
+            throw new IllegalArgumentException();
     }
 
     /******************************************************************
@@ -226,7 +227,7 @@ public class ChangeJar {
      */
     public void takeOut(int quarters, int dimes, int nickels, int pennies) {
         if(mutation) {
-            errorFunds(quarters, dimes, nickels, pennies);
+            changeCheck(quarters, dimes, nickels, pennies);
             //Throws error if you try to take out more change than there is the Jar
             if(this.quarters - quarters < 0 || this.dimes - dimes < 0 ||
                     this.nickels - nickels < 0 || this.pennies - pennies < 0)
@@ -254,10 +255,30 @@ public class ChangeJar {
      * @return a new ChangeJar based on the change taken out of the original Jar
      */
     public ChangeJar takeOut (double amount) {
+        String stringAmount = "" + amount;
+
+        //Throws an error if there are too many digits beyond the decimal point
+        if(stringAmount.contains(".") && stringAmount.indexOf('.') - stringAmount.length() > 3)
+            throw new IllegalArgumentException();
         if(amount < 0)
             throw new IllegalArgumentException();
-        if(mutation){
-
+        if(mutation) {
+            int intAmount = (int) (amount * 100);
+            for(int newPennies = 0; newPennies < this.pennies; newPennies++)
+                for (int newNickels = 0; newNickels < this.nickels; newNickels++)
+                    for (int newDimes = 0; newDimes < this.dimes; newDimes++)
+                        for (int newQuarters = 0; newQuarters < this.quarters; newQuarters++) {
+                            int currentAmount = (newQuarters * 25) +
+                                    (newDimes * 10) + (newNickels * 5) + newPennies;
+                            if (currentAmount == intAmount) {
+                                this.quarters -= newQuarters;
+                                this.dimes -= newDimes;
+                                this.nickels -= newNickels;
+                                this.pennies -= newPennies;
+                                return new ChangeJar(newQuarters, newDimes,
+                                        newNickels, newPennies);
+                            }
+                        }
         }
         return null;
     }
@@ -282,7 +303,7 @@ public class ChangeJar {
      * @param pennies is the number of pennies being added
      */
     public void add(int quarters, int dimes, int nickels, int pennies) {
-        errorFunds(quarters, dimes, nickels, pennies);
+        changeCheck(quarters, dimes, nickels, pennies);
         if (mutation) {
             this.quarters += quarters;
             this.dimes += dimes;
@@ -366,10 +387,16 @@ public class ChangeJar {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        quarters = scanner.nextInt();
-        dimes = scanner.nextInt();
-        nickels = scanner.nextInt();
-        pennies = scanner.nextInt();
+        int tempQuarters = scanner.nextInt();
+        int tempDimes = scanner.nextInt();
+        int tempNickels = scanner.nextInt();
+        int tempPennies = scanner.nextInt();
+        //Need to test to make sure the values didn't somehow become negative
+        changeCheck(tempQuarters, tempDimes, tempNickels, tempPennies);
+        quarters = tempQuarters;
+        dimes = tempDimes;
+        nickels = tempNickels;
+        pennies = tempPennies;
 
     }
 
@@ -388,14 +415,14 @@ public class ChangeJar {
      * @param n is the number of nickels being tested
      * @param p is the number of pennies being tested
      */
-    private void errorFunds(int q, int d, int n, int p){
-        if (quarters < 0)
+    private void changeCheck(int q, int d, int n, int p){
+        if (q < 0)
             throw new IllegalArgumentException();
-        if (dimes < 0)
+        if (d < 0)
             throw new IllegalArgumentException();
-        if (nickels < 0)
+        if (n < 0)
             throw new IllegalArgumentException();
-        if (pennies < 0)
+        if (p < 0)
             throw new IllegalArgumentException();
 
     }
@@ -423,6 +450,12 @@ public class ChangeJar {
             s2.dec();
         System.out.println("amount: \n" + s2);
 
+        ChangeJar s3 = new ChangeJar(1,1,1,1);
+        s3.save("test.txt");
+        s3 = new ChangeJar();
+        s3.load("test.txt");
+        System.out.println(s3);
+
     }
 
     public int getQuarters() {
@@ -430,6 +463,8 @@ public class ChangeJar {
     }
 
     public void setQuarters(int quarters) {
+        if(quarters < 0)
+            throw new IllegalArgumentException();
         this.quarters = quarters;
     }
 
@@ -438,6 +473,8 @@ public class ChangeJar {
     }
 
     public void setDimes(int dimes) {
+        if(dimes < 0)
+            throw new IllegalArgumentException();
         this.dimes = dimes;
     }
 
@@ -446,6 +483,8 @@ public class ChangeJar {
     }
 
     public void setNickels(int nickels) {
+        if(nickels < 0)
+            throw new IllegalArgumentException();
         this.nickels = nickels;
     }
 
@@ -454,6 +493,8 @@ public class ChangeJar {
     }
 
     public void setPennies(int pennies) {
+        if(pennies < 0)
+            throw new IllegalArgumentException();
         this.pennies = pennies;
     }
 
