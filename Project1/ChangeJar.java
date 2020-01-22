@@ -54,7 +54,7 @@ public class ChangeJar {
     public ChangeJar(double amount){
         String stringAmount = "" + amount;
         //Throws an error if there are too many digits beyond the decimal point
-        if(stringAmount.contains(".") && stringAmount.indexOf('.') - stringAmount.length() > 3)
+        if(stringAmount.contains(".") && stringAmount.length() - stringAmount.indexOf('.') > 3)
             throw new IllegalArgumentException();
 
         int temp = (int) (amount * 100);
@@ -100,7 +100,7 @@ public class ChangeJar {
         }
 
         //Throws an error if there are too many digits beyond the decimal point
-        if(amount.contains(".") && amount.indexOf('.') - amount.length() > 3)
+        if(amount.contains(".") && amount.length() - amount.indexOf('.') > 3)
             throw new IllegalArgumentException();
 
         int temp = (int) (Double.parseDouble(amount) * 100);
@@ -258,7 +258,7 @@ public class ChangeJar {
         String stringAmount = "" + amount;
 
         //Throws an error if there are too many digits beyond the decimal point
-        if(stringAmount.contains(".") && stringAmount.indexOf('.') - stringAmount.length() > 3)
+        if(stringAmount.contains(".") && stringAmount.length() - stringAmount.indexOf('.') > 3)
             throw new IllegalArgumentException();
         if(amount < 0)
             throw new IllegalArgumentException();
@@ -280,7 +280,8 @@ public class ChangeJar {
                             }
                         }
         }
-        return null;
+        throw new IllegalArgumentException();
+        //return null;
     }
 
     /******************************************************************
@@ -465,7 +466,8 @@ public class ChangeJar {
     public void setQuarters(int quarters) {
         if(quarters < 0)
             throw new IllegalArgumentException();
-        this.quarters = quarters;
+        if(mutation)
+            this.quarters = quarters;
     }
 
     public int getDimes() {
@@ -475,7 +477,8 @@ public class ChangeJar {
     public void setDimes(int dimes) {
         if(dimes < 0)
             throw new IllegalArgumentException();
-        this.dimes = dimes;
+        if(mutation)
+            this.dimes = dimes;
     }
 
     public int getNickels() {
@@ -485,7 +488,8 @@ public class ChangeJar {
     public void setNickels(int nickels) {
         if(nickels < 0)
             throw new IllegalArgumentException();
-        this.nickels = nickels;
+        if(mutation)
+            this.nickels = nickels;
     }
 
     public int getPennies() {
@@ -495,7 +499,8 @@ public class ChangeJar {
     public void setPennies(int pennies) {
         if(pennies < 0)
             throw new IllegalArgumentException();
-        this.pennies = pennies;
+        if(mutation)
+            this.pennies = pennies;
     }
 
 

@@ -37,6 +37,62 @@ public class ChangeJarTest {
 		assertEquals (2, jar3.getPennies());
 	}
 
+	// Testing the constructor that takes a double
+	@Test
+	public void testDoubleConstructor() {
+		ChangeJar test = new ChangeJar(1.34);
+		assertEquals(5, test.getQuarters());
+		assertEquals(0, test.getDimes());
+		assertEquals(1, test.getNickels());
+		assertEquals(4, test.getPennies());
+	}
+
+	// Testing the constructor that takes a string
+	@Test
+	public void testStringConstructor() {
+		ChangeJar test = new ChangeJar("1.3");
+		assertEquals(5, test.getQuarters());
+		assertEquals(0, test.getDimes());
+		assertEquals(1, test.getNickels());
+		assertEquals(0, test.getPennies());
+	}
+
+	// Testing the constructor that takes a double with too many numbers beyond the decimal
+	@Test (expected = IllegalArgumentException.class)
+	public void testDoubleConstructorTooLong() {
+		ChangeJar test = new ChangeJar(1.111);
+	}
+
+	// Testing the constructor that takes a string with too many numbers beyond the decimal
+	@Test (expected = IllegalArgumentException.class)
+	public void testStringConstructorTooLong() {
+		ChangeJar test = new ChangeJar("1.111");
+	}
+
+	// Testing the constructor that takes a string with non digits
+	@Test (expected = IllegalArgumentException.class)
+	public void testStringConstructorNonDigit() {
+		ChangeJar test = new ChangeJar("abc");
+	}
+
+	// Testing the constructor that takes a string with too many decimals
+	@Test (expected = IllegalArgumentException.class)
+	public void testStringConstructorTooManyDecimals() {
+		ChangeJar test = new ChangeJar("1.3.4");
+	}
+
+	// Testing the constructor that takes a double with a negative amount
+	@Test (expected = IllegalArgumentException.class)
+	public void testDoubleConstructorNegative() {
+		ChangeJar test = new ChangeJar(-1.34);
+	}
+
+	// Testing the constructor that takes a string with a negative amount
+	@Test (expected = IllegalArgumentException.class)
+	public void testStringConstructorNegative() {
+		ChangeJar test = new ChangeJar("-1.34");
+	}
+
 	// testing valid takeOut with wide range of
 	// quarters, dimes, nickels, pennies
 	@Test
@@ -64,6 +120,27 @@ public class ChangeJarTest {
 		assertEquals (2, jar2.getDimes());
 		assertEquals (0, jar2.getNickels());
 		assertEquals (2, jar2.getPennies());
+	}
+
+	// Testing takeOut method with too many numbers beyond the decimal
+	@Test(expected = IllegalArgumentException.class)
+	public void testTakeOutTooLong() {
+		ChangeJar jar1 = new ChangeJar(1.34);
+		ChangeJar jar2 = jar1.takeOut(1.111);
+	}
+
+	// Testing takeOut method with a negative amount
+	@Test(expected = IllegalArgumentException.class)
+	public void testTakeOutNegativeAmount() {
+		ChangeJar jar1 = new ChangeJar(1.34);
+		ChangeJar jar2 = jar1.takeOut(-1);
+	}
+
+	// Testing takeOut method where it is impossible to take out the exact amount
+	@Test(expected = IllegalArgumentException.class)
+	public void testTakeOutImpossibleAmount() {
+		ChangeJar jar1 = new ChangeJar(100, 0, 0, 0);
+		ChangeJar jar2 = jar1.takeOut(0.05);
 	}
 
 	// testing putIn for valid low numbers
@@ -115,6 +192,14 @@ public class ChangeJarTest {
 	}
 
 	// IMPORTANT: only one test per exception!!!
+
+	// testing negative numbers for pennies in takeOut
+	@Test(expected = IllegalArgumentException.class)
+	public void testTakeOutNegPennies() {
+		ChangeJar jar1 = new ChangeJar(2, 2, 2, 2);
+		jar1.takeOut(1,1,1,-1);
+	}
+
 	// testing negative number for nickels in takeOut
 	@Test
 	(expected = IllegalArgumentException.class)
@@ -131,10 +216,194 @@ public class ChangeJarTest {
 		jar1.takeOut(1,-1,1,1);
 	}
 
+	// testing negative number of quarters in takeOut
+	@Test(expected = IllegalArgumentException.class)
+	public void testTakeOutNegQuarters() {
+		ChangeJar jar1 = new ChangeJar(2,2,2,2);
+		jar1.takeOut(-1,1,1,1);
+	}
+
+	// testing negative numbers for pennies in add
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddNegPennies() {
+		ChangeJar jar1 = new ChangeJar(2, 2, 2, 2);
+		jar1.add(1,1,1,-1);
+	}
+
+	// testing negative number for nickels in add
+	@Test
+			(expected = IllegalArgumentException.class)
+	public void testAddNegNickels() {
+		ChangeJar jar1 = new ChangeJar(2,2,2,2);
+		jar1.add(1,1,-1,1);
+	}
+
+	// testing negative number for dimes in add
+	@Test
+			(expected = IllegalArgumentException.class)
+	public void testAddOutNegDimes() {
+		ChangeJar jar1 = new ChangeJar(2,2,2,2);
+		jar1.add(1,-1,1,1);
+	}
+
+	// testing negative number of quarters in add
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddNegQuarters() {
+		ChangeJar jar1 = new ChangeJar(2,2,2,2);
+		jar1.add(-1,1,1,1);
+	}
+
 	// testing negative number quarters for the constructor
 	@Test(expected = IllegalArgumentException.class)
 	public void testConstructorNegQuarters() {
 		new ChangeJar(-300, 0, 0, 0);
+	}
+
+	// testing negative number dimes for the constructor
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructorNegDimes() {
+		new ChangeJar(0,-300,0,0);
+	}
+
+	// testing negative number nickels for the constructor
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructorNegNickels() {
+		new ChangeJar(0,0,-300,0);
+	}
+
+	// testing negative number pennies for the constructor
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructorNegPennies() {
+		new ChangeJar(0,0,0,-300);
+	}
+
+	// Testing takeOut when mutation is off
+	@Test
+	public void testMutationOffTakeOut() {
+		ChangeJar.mutate(false);
+		ChangeJar test = new ChangeJar(1,2,3,4);
+		test.takeOut(1,1,1,1);
+		assertEquals(1, test.getQuarters());
+		assertEquals(2, test.getDimes());
+		assertEquals(3, test.getNickels());
+		assertEquals(4, test.getPennies());
+		ChangeJar.mutate(true);
+	}
+
+	// Testing takeOut when mutation is off
+	@Test
+	public void testMutationOffTakeOut2() {
+		ChangeJar.mutate(false);
+		ChangeJar test = new ChangeJar(1,2,3,4);
+		ChangeJar test2 = new ChangeJar(1,1,1,1);
+		test.takeOut(test2);
+		assertEquals(1, test.getQuarters());
+		assertEquals(2, test.getDimes());
+		assertEquals(3, test.getNickels());
+		assertEquals(4, test.getPennies());
+		ChangeJar.mutate(true);
+	}
+
+	// Testing takeOut when mutation is off
+	@Test(expected = IllegalArgumentException.class)
+	public void testMutationOffTakeOut3() {
+		ChangeJar.mutate(false);
+		ChangeJar test = new ChangeJar(1,2,3,4);
+		ChangeJar test2 = test.takeOut(0.04);
+		ChangeJar.mutate(true);
+	}
+
+	// Testing dec when mutation is off
+	@Test
+	public void testMutationOffDec() {
+		ChangeJar.mutate(false);
+		ChangeJar test = new ChangeJar(1,2,3,4);
+        test.dec();
+		assertEquals(1, test.getQuarters());
+		assertEquals(2, test.getDimes());
+		assertEquals(3, test.getNickels());
+		assertEquals(4, test.getPennies());
+		ChangeJar.mutate(true);
+	}
+
+	// Testing add when mutation is off
+	@Test
+	public void testMutationOffAdd() {
+		ChangeJar.mutate(false);
+		ChangeJar test = new ChangeJar(1,2,3,4);
+		test.add(1,1,1,1);
+		assertEquals(1, test.getQuarters());
+		assertEquals(2, test.getDimes());
+		assertEquals(3, test.getNickels());
+		assertEquals(4, test.getPennies());
+		ChangeJar.mutate(true);
+	}
+
+	// Testing add when mutation is off
+	@Test
+	public void testMutationOffAdd2() {
+		ChangeJar.mutate(false);
+		ChangeJar test = new ChangeJar(1,2,3,4);
+		ChangeJar test2 = new ChangeJar(1,1,1,1);
+		test.add(test2);
+		assertEquals(1, test.getQuarters());
+		assertEquals(2, test.getDimes());
+		assertEquals(3, test.getNickels());
+		assertEquals(4, test.getPennies());
+		ChangeJar.mutate(true);
+	}
+
+	// Testing inc when mutation is off
+	@Test
+	public void testMutationOffInc() {
+		ChangeJar.mutate(false);
+		ChangeJar test = new ChangeJar(1,2,3,4);
+		test.inc();
+		assertEquals(1, test.getQuarters());
+		assertEquals(2, test.getDimes());
+		assertEquals(3, test.getNickels());
+		assertEquals(4, test.getPennies());
+		ChangeJar.mutate(true);
+	}
+
+	// Testing setQuarters when mutation is off
+	@Test
+	public void testMutationOffSetQuarters(){
+		ChangeJar.mutate(false);
+		ChangeJar test = new ChangeJar();
+		test.setQuarters(10);
+		assertEquals(0, test.getQuarters());
+		ChangeJar.mutate(true);
+	}
+
+	// Testing setDimes when mutation is off
+	@Test
+	public void testMutationOffSetDimes(){
+		ChangeJar.mutate(false);
+		ChangeJar test = new ChangeJar();
+		test.setDimes(10);
+		assertEquals(0, test.getDimes());
+		ChangeJar.mutate(true);
+	}
+
+	// Testing setNickels when mutation is off
+	@Test
+	public void testMutationOffSetNickels(){
+		ChangeJar.mutate(false);
+		ChangeJar test = new ChangeJar();
+		test.setNickels(10);
+		assertEquals(0, test.getNickels());
+		ChangeJar.mutate(true);
+	}
+
+	// Testing setPennies when mutation is off
+	@Test
+	public void testMutationOffSetPennies(){
+		ChangeJar.mutate(false);
+		ChangeJar test = new ChangeJar();
+		test.setPennies(10);
+		assertEquals(0, test.getPennies());
+		ChangeJar.mutate(true);
 	}
 
 }
