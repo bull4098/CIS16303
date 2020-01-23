@@ -50,6 +50,7 @@ public class ChangeJar {
      *   put in
      *
      * @param amount is the amount of money being put inside the ChangeJar
+     * @throws IllegalArgumentException when there are too many digits beyond the decimal point
      */
     public ChangeJar(double amount){
         String stringAmount = "" + amount;
@@ -82,6 +83,8 @@ public class ChangeJar {
      *   put in
      *
      * @param amount is the amount of money being put inside the ChangeJar
+     * @throws IllegalArgumentException when the entered String is not a proper double or has
+     *    too many digits beyond the decimal point
      */
     public ChangeJar(String amount){
 
@@ -119,18 +122,12 @@ public class ChangeJar {
      *                 
      */
     public ChangeJar(int quarters, int dimes, int nickels, int pennies) {
-        //super();
-
         changeCheck(quarters, dimes, nickels, pennies);
-
         this.quarters = quarters;
         this.dimes = dimes;
         this.nickels = nickels;
         this.pennies = pennies;
     }
-
-// REMEBER to use the Java Style Guide for the rest of your code.
-
 
     /******************************************************************
      *    Helper method tha converts all the change in a jar into pennies
@@ -141,6 +138,19 @@ public class ChangeJar {
         return (temp.quarters * 25) + (temp.dimes * 10) + (temp.nickels * 5) + temp.pennies;
     }
 
+    /******************************************************************
+     *
+     * @return amount of money in a Jar
+     */
+    public double getAmount () {
+        return convertToPennies(this) / 100.0;
+    }
+
+    /******************************************************************
+     *   Helper method to help construct a new jar
+     * @param amount the amount of change being added (in pennies worth)
+     * @throws IllegalArgumentException if it is a negative amount
+     */
     private void convertToChange (int amount){
         if(amount < 0)
             throw new IllegalArgumentException();
@@ -151,6 +161,25 @@ public class ChangeJar {
         nickels = amount / 5;
         amount -= nickels * 5;
         pennies = amount;
+    }
+
+    /******************************************************************
+     *   Helper method that throws out an error if the input parameters are not allowed
+     * @param q is the number of quarters being tested
+     * @param d is the number of dimes being tested
+     * @param n is the number of nickels being tested
+     * @param p is the number of pennies being tested
+     */
+    private void changeCheck(int q, int d, int n, int p){
+        if (q < 0)
+            throw new IllegalArgumentException();
+        if (d < 0)
+            throw new IllegalArgumentException();
+        if (n < 0)
+            throw new IllegalArgumentException();
+        if (p < 0)
+            throw new IllegalArgumentException();
+
     }
 
     /******************************************************************
@@ -165,6 +194,7 @@ public class ChangeJar {
      *   Determines if "this" ChangeJar has the same amount as the input Object
      * @param s is an Object (presumably a ChangeJar) that is being equated to "this" ChangeJar
      * @return true or false depending on if "this" ChangeJar and the passed Object are equal
+     * @throws IllegalArgumentException if the Object is null or not a ChangeJar
      */
     public boolean equals(Object s){
         if (s != null) {
@@ -224,6 +254,7 @@ public class ChangeJar {
      * @param dimes is the number of dimes being taken out
      * @param nickels is the number of nickels being taken out
      * @param pennies is the number of pennies being taken out
+     * @throws IllegalArgumentException if you try to take out more than is available
      */
     public void takeOut(int quarters, int dimes, int nickels, int pennies) {
         if(mutation) {
@@ -253,6 +284,8 @@ public class ChangeJar {
      *  Takes an amount out of "this" Jar to create another Jar
      * @param amount is the amount of money being taken out
      * @return a new ChangeJar based on the change taken out of the original Jar
+     * @throws IllegalArgumentException if the amount is negative, is impossible to create a jar
+     *    with the entered amount and current jar, or there are too many digits beyond the decimal
      */
     public ChangeJar takeOut (double amount) {
         String stringAmount = "" + amount;
@@ -264,6 +297,7 @@ public class ChangeJar {
             throw new IllegalArgumentException();
         if(mutation) {
             int intAmount = (int) (amount * 100);
+            //Tests every possible combination of change in the current jar to get the desired amount
             for(int newPennies = 0; newPennies < this.pennies; newPennies++)
                 for (int newNickels = 0; newNickels < this.nickels; newNickels++)
                     for (int newDimes = 0; newDimes < this.dimes; newDimes++)
@@ -281,11 +315,11 @@ public class ChangeJar {
                         }
         }
         throw new IllegalArgumentException();
-        //return null;
     }
 
     /******************************************************************
      * Decreases the amount in the Jar by 1 penny
+     * @throws IllegalArgumentException if there are no more pennies to take out
      */
     public void dec(){
         if(mutation) {
@@ -339,18 +373,20 @@ public class ChangeJar {
      * @return A String summary of the change in the Jar
      */
     public String toString() {
-        // here is a hint
-        //String s = this.quarters + " Quarter" + ((quarters != 1) ? "s" : "") + "\n";
         String s = "" + this.quarters + " quarter";
+        //If quarters is not singular
         if(quarters != 1)
             s += "s";
         s += " " + this.dimes + " dime";
+        //If dimes is not singular
         if(dimes != 1)
             s += "s";
         s += " " + this.nickels + " nickel";
+        //If nickels is not singular
         if(nickels != 1)
             s += "s";
         s += " " + this.pennies + " penn";
+        //If pennies is not singular
         if(pennies != 1)
             s += "ies";
         else
@@ -403,31 +439,91 @@ public class ChangeJar {
 
     /******************************************************************
      *
-     * @return amount of money in a Jar
+     * @return the amount of quarters in the jar
      */
-    public double getAmount () {
-        return convertToPennies(this) / 100.0;
+    public int getQuarters() {
+        return quarters;
     }
 
     /******************************************************************
-     *   Helper method that throws out an error if the input parameters are not allowed
-     * @param q is the number of quarters being tested
-     * @param d is the number of dimes being tested
-     * @param n is the number of nickels being tested
-     * @param p is the number of pennies being tested
+     *
+     * @param quarters is amount of quarters desired to be set to
+     * @throws IllegalArgumentException if you try to set to a negative value
      */
-    private void changeCheck(int q, int d, int n, int p){
-        if (q < 0)
+    public void setQuarters(int quarters) {
+        if(quarters < 0)
             throw new IllegalArgumentException();
-        if (d < 0)
-            throw new IllegalArgumentException();
-        if (n < 0)
-            throw new IllegalArgumentException();
-        if (p < 0)
-            throw new IllegalArgumentException();
-
+        if(mutation)
+            this.quarters = quarters;
     }
 
+    /******************************************************************
+     *
+     * @return the amount of dimes in the jar
+     */
+    public int getDimes() {
+        return dimes;
+    }
+
+    /******************************************************************
+     *
+     * @param dimes is amount of dimes desired to be set to
+     * @throws IllegalArgumentException if you try to set to a negative value
+     */
+    public void setDimes(int dimes) {
+        if(dimes < 0)
+            throw new IllegalArgumentException();
+        if(mutation)
+            this.dimes = dimes;
+    }
+
+    /******************************************************************
+     *
+     * @return the amount of nickels in the jar
+     */
+    public int getNickels() {
+        return nickels;
+    }
+
+    /******************************************************************
+     *
+     * @param nickels is amount of nickels desired to be set to
+     * @throws IllegalArgumentException if you try to set to a negative value
+     */
+    public void setNickels(int nickels) {
+        if(nickels < 0)
+            throw new IllegalArgumentException();
+        if(mutation)
+            this.nickels = nickels;
+    }
+
+    /******************************************************************
+     *
+     * @return the amount of pennies in the jar
+     */
+    public int getPennies() {
+        return pennies;
+    }
+
+    /******************************************************************
+     *
+     * @param pennies is amount of pennies desired to be set to
+     * @throws IllegalArgumentException if you try to set to a negative value
+     */
+    public void setPennies(int pennies) {
+        if(pennies < 0)
+            throw new IllegalArgumentException();
+        if(mutation)
+            this.pennies = pennies;
+    }
+
+    /******************************************************************
+     *
+     * @return whether mutation is true (on) or false (off)
+     */
+    public static boolean getMutationStatus(){
+        return mutation;
+    }
 
     public static void main(String[] args) {
         ChangeJar s = new ChangeJar("2.82");
@@ -457,50 +553,6 @@ public class ChangeJar {
         s3.load("test.txt");
         System.out.println(s3);
 
-    }
-
-    public int getQuarters() {
-        return quarters;
-    }
-
-    public void setQuarters(int quarters) {
-        if(quarters < 0)
-            throw new IllegalArgumentException();
-        if(mutation)
-            this.quarters = quarters;
-    }
-
-    public int getDimes() {
-        return dimes;
-    }
-
-    public void setDimes(int dimes) {
-        if(dimes < 0)
-            throw new IllegalArgumentException();
-        if(mutation)
-            this.dimes = dimes;
-    }
-
-    public int getNickels() {
-        return nickels;
-    }
-
-    public void setNickels(int nickels) {
-        if(nickels < 0)
-            throw new IllegalArgumentException();
-        if(mutation)
-            this.nickels = nickels;
-    }
-
-    public int getPennies() {
-        return pennies;
-    }
-
-    public void setPennies(int pennies) {
-        if(pennies < 0)
-            throw new IllegalArgumentException();
-        if(mutation)
-            this.pennies = pennies;
     }
 
 

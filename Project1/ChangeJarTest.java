@@ -143,15 +143,50 @@ public class ChangeJarTest {
 		ChangeJar jar2 = jar1.takeOut(0.05);
 	}
 
-	// testing putIn for valid low numbers
+	// Testing standard decrement
 	@Test
-	public void testPutIn() {
+	public void testDec(){
+		ChangeJar jar = new ChangeJar(0,0,0,1);
+		jar.dec();
+		assertEquals(0, jar.getPennies());
+	}
+
+	// Testing decrement when there are no pennies left
+	@Test (expected = IllegalArgumentException.class)
+	public void testDecNoPennies(){
+		ChangeJar jar = new ChangeJar(1,1,1,0);
+		jar.dec();
+	}
+
+	// testing add for valid low numbers
+	@Test
+	public void testAdd() {
 		ChangeJar jar = new ChangeJar();
-		jar.add(2,3,4,5);  // this line was commented because no putin method yet.
+		jar.add(2,3,4,5);
 		assertEquals (2, jar.getQuarters());
 		assertEquals (3, jar.getDimes());
 		assertEquals (4, jar.getNickels());
 		assertEquals (5, jar.getPennies());
+	}
+
+	// Testing add with another ChangeJar
+	@Test
+	public void testAdd2(){
+		ChangeJar jar1 = new ChangeJar();
+		ChangeJar jar2 = new ChangeJar(2,3,4,5);
+		jar1.add(jar2);
+		assertEquals (2, jar1.getQuarters());
+		assertEquals (3, jar1.getDimes());
+		assertEquals (4, jar1.getNickels());
+		assertEquals (5, jar1.getPennies());
+	}
+
+	// Testing increment
+	@Test
+	public void testInc(){
+		ChangeJar jar = new ChangeJar();
+		jar.inc();
+		assertEquals(1, jar.getPennies());
 	}
 
 	// Testing equals for valid numbers
@@ -165,6 +200,33 @@ public class ChangeJarTest {
 		assertTrue(jar1.equals(jar3));
 	}
 
+	// Testing the static equals
+	@Test
+	public void testEqual2(){
+		ChangeJar jar1 = new ChangeJar(2, 5, 4, 2);
+		ChangeJar jar2 = new ChangeJar(6, 5, 4, 2);
+		ChangeJar jar3 = new ChangeJar(2, 5, 4, 2);
+
+		assertFalse(ChangeJar.equals(jar1, jar2));
+		assertTrue(ChangeJar.equals(jar1, jar3));
+	}
+
+	// Testing equals with a null Object
+	@Test(expected = IllegalArgumentException.class)
+	public void testNullEqual(){
+		ChangeJar jar1 = new ChangeJar(1.34);
+		ChangeJar jar2 = null;
+		jar1.equals(jar2);
+	}
+
+	//Testing equals with an Object that's not a ChangeJar
+	@Test(expected = IllegalArgumentException.class)
+	public void testOtherObjectEqual(){
+		ChangeJar jar1 = new ChangeJar(1.45);
+		String jar2 = "this is a ChangeJar";
+		jar1.equals(jar2);
+	}
+
 	// testing compareTo all returns
 	@Test
 	public void testCompareTo () {
@@ -176,6 +238,19 @@ public class ChangeJarTest {
 		assertTrue(jar2.compareTo(jar1) > 0);
 		assertTrue(jar3.compareTo(jar1) < 0);
 		assertTrue(jar1.compareTo(jar4) == 0);
+	}
+
+	// testing static compareTo all returns
+	@Test
+	public void testCompareTo2 () {
+		ChangeJar jar1 = new ChangeJar(2, 5, 4, 2);
+		ChangeJar jar2 = new ChangeJar(6, 5, 4, 2);
+		ChangeJar jar3 = new ChangeJar(2, 3, 4, 2);
+		ChangeJar jar4 = new ChangeJar(2, 5, 4, 2);
+
+		assertTrue(ChangeJar.compareTo(jar2, jar1) > 0);
+		assertTrue(ChangeJar.compareTo(jar3, jar1) < 0);
+		assertTrue(ChangeJar.compareTo(jar1, jar4) == 0);
 	}
 
 	// load and save combined.
@@ -221,6 +296,34 @@ public class ChangeJarTest {
 	public void testTakeOutNegQuarters() {
 		ChangeJar jar1 = new ChangeJar(2,2,2,2);
 		jar1.takeOut(-1,1,1,1);
+	}
+
+	// Testing take out more quarters than available
+	@Test(expected = IllegalArgumentException.class)
+	public void testTakeOutTooManyQuarters(){
+		ChangeJar jar = new ChangeJar(5,5,5,5);
+		jar.takeOut(6,1,1,1);
+	}
+
+	// Testing take out more quarters than available
+	@Test(expected = IllegalArgumentException.class)
+	public void testTakeOutTooManyDimes(){
+		ChangeJar jar = new ChangeJar(5,5,5,5);
+		jar.takeOut(1,6,1,1);
+	}
+
+	// Testing take out more quarters than available
+	@Test(expected = IllegalArgumentException.class)
+	public void testTakeOutTooManyNickels(){
+		ChangeJar jar = new ChangeJar(5,5,5,5);
+		jar.takeOut(1,1,6,1);
+	}
+
+	// Testing take out more quarters than available
+	@Test(expected = IllegalArgumentException.class)
+	public void testTakeOutTooManyPennies(){
+		ChangeJar jar = new ChangeJar(5,5,5,5);
+		jar.takeOut(1,1,1,6);
 	}
 
 	// testing negative numbers for pennies in add
