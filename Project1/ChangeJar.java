@@ -7,12 +7,10 @@ import java.util.*;
 
 /**
  *
- * The purpose this class is to simulate a change Jar.
+ * The purpose this class is to simulate a change Jar. Jars can hold quarters, dimes, nickels, and
+ * pennies. Various methods allow for the ability to add or takeout change from the jar and comparing
+ * amount with other jars.
  *
- *
- * 	 NOTE: MUCH MORE CODING IS NEEDED IN THESE METHODS, and you
- * 	 will need to comply with the Java Style Guide.
- * 	 HOWEVER,  HERE IS SOME STARTING CODE.
  *
  * @author Tim Nguyen
  */
@@ -54,6 +52,7 @@ public class ChangeJar {
      */
     public ChangeJar(double amount){
         String stringAmount = "" + amount;
+
         //Throws an error if there are too many digits beyond the decimal point
         if(stringAmount.contains(".") && stringAmount.length() - stringAmount.indexOf('.') > 3)
             throw new IllegalArgumentException();
@@ -259,6 +258,7 @@ public class ChangeJar {
     public void takeOut(int quarters, int dimes, int nickels, int pennies) {
         if(mutation) {
             changeCheck(quarters, dimes, nickels, pennies);
+
             //Throws error if you try to take out more change than there is the Jar
             if(this.quarters - quarters < 0 || this.dimes - dimes < 0 ||
                     this.nickels - nickels < 0 || this.pennies - pennies < 0)
@@ -297,11 +297,12 @@ public class ChangeJar {
             throw new IllegalArgumentException();
         if(mutation) {
             int intAmount = (int) (amount * 100);
+
             //Tests every possible combination of change in the current jar to get the desired amount
-            for(int newPennies = 0; newPennies < this.pennies; newPennies++)
-                for (int newNickels = 0; newNickels < this.nickels; newNickels++)
-                    for (int newDimes = 0; newDimes < this.dimes; newDimes++)
-                        for (int newQuarters = 0; newQuarters < this.quarters; newQuarters++) {
+            for(int newPennies = 0; newPennies <= this.pennies; newPennies++)
+                for (int newNickels = 0; newNickels <= this.nickels; newNickels++)
+                    for (int newDimes = 0; newDimes <= this.dimes; newDimes++)
+                        for (int newQuarters = 0; newQuarters <= this.quarters; newQuarters++) {
                             int currentAmount = (newQuarters * 25) +
                                     (newDimes * 10) + (newNickels * 5) + newPennies;
                             if (currentAmount == intAmount) {
@@ -314,6 +315,8 @@ public class ChangeJar {
                             }
                         }
         }
+        else
+            return null;
         throw new IllegalArgumentException();
     }
 
@@ -374,23 +377,28 @@ public class ChangeJar {
      */
     public String toString() {
         String s = "" + this.quarters + " quarter";
+
         //If quarters is not singular
         if(quarters != 1)
             s += "s";
-        s += " " + this.dimes + " dime";
+        s += ", " + this.dimes + " dime";
+
         //If dimes is not singular
         if(dimes != 1)
             s += "s";
-        s += " " + this.nickels + " nickel";
+        s += ", " + this.nickels + " nickel";
+
         //If nickels is not singular
         if(nickels != 1)
             s += "s";
-        s += " " + this.pennies + " penn";
+        s += ", " + this.pennies + " penn";
+
         //If pennies is not singular
         if(pennies != 1)
             s += "ies";
         else
             s += "y";
+
         return s;
     }
 
@@ -399,7 +407,6 @@ public class ChangeJar {
      * @param fileName is the name of the file the Jar is being saved to
      */
     public void save(String fileName) {
-
         PrintWriter out = null;
         try {
             out = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
@@ -526,32 +533,66 @@ public class ChangeJar {
     }
 
     public static void main(String[] args) {
-        ChangeJar s = new ChangeJar("2.82");
-        System.out.println("2.82 Amount: \n" + s);
+        System.out.println("Testing initialized...");
+        int errors = 0;
+        ChangeJar jar1 = new ChangeJar();
+        if(jar1.getQuarters() != 0 || jar1.getDimes() != 0 || jar1.getNickels() != 0 || jar1.getPennies() != 0) {
+            System.out.println("ERROR");
+            errors++;
+        }
 
-        s = new ChangeJar("8");
-        System.out.println("8 Amount: \n" + s);
+        jar1 = new ChangeJar(1,1,1,1);
+        if(jar1.getQuarters() != 1 || jar1.getDimes() != 1 || jar1.getNickels() != 1 || jar1.getPennies() != 1) {
+            System.out.println("ERROR");
+            errors++;
+        }
 
-        s = new ChangeJar(".28");
-        System.out.println(".28 Amount: \n" + s);
+        jar1 = new ChangeJar("1.34");
+        if(jar1.getQuarters() != 5 || jar1.getDimes() != 0 || jar1.getNickels() != 1 || jar1.getPennies() != 4) {
+            System.out.println("ERROR");
+            errors++;
+        }
 
-        ChangeJar s1 = new ChangeJar();
-        System.out.println("0 Amount: \n" + s1);
+        ChangeJar jar2 = new ChangeJar(1.34);
+        if(!jar1.equals(jar2)){
+            System.out.println("ERROR");
+            errors++;
+        }
 
-        s1.add(1,1,1,100);
-        System.out.println("1,1,1,100 Amount: \n" + s1);
+        jar2 = new ChangeJar(0,0,0,1);
+        if(ChangeJar.compareTo(jar1,jar2) != 1) {
+            System.out.println("ERROR");
+            errors++;
+        }
 
-        ChangeJar s2 = new ChangeJar(41.99);
-        s2.add(0,0,0,99);
-        for (int i = 0; i < 100; i++)
-            s2.dec();
-        System.out.println("amount: \n" + s2);
+        jar1= new ChangeJar(10,10,10,10);
+        jar1.takeOut(jar2);
+        if(jar1.getPennies() != 9){
+            System.out.println("ERROR");
+            errors++;
+        }
 
-        ChangeJar s3 = new ChangeJar(1,1,1,1);
-        s3.save("test.txt");
-        s3 = new ChangeJar();
-        s3.load("test.txt");
-        System.out.println(s3);
+        jar1.inc();
+        if(jar1.getPennies() != 10){
+            System.out.println("ERROR");
+            errors++;
+        }
+
+        jar1.add(5,5,5,5);
+        if(jar1.getQuarters() != 15 || jar1.getDimes() != 15 || jar1.getNickels() != 15 || jar1.getPennies() != 15){
+            System.out.println("ERROR");
+            errors++;
+        }
+
+        jar1.save("test.txt");
+        jar1 = new ChangeJar();
+        jar1.load("test.txt");
+        if(jar1.getQuarters() != 15 || jar1.getDimes() != 15 || jar1.getNickels() != 15 || jar1.getPennies() != 15){
+            System.out.println("ERROR");
+            errors++;
+        }
+
+        System.out.println("Testing finalized... encountered " + errors + " errors");
 
     }
 

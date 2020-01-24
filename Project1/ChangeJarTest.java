@@ -93,6 +93,48 @@ public class ChangeJarTest {
 		ChangeJar test = new ChangeJar("-1.34");
 	}
 
+	// Testing toString will all plural change
+	@Test
+	public void testToString(){
+		ChangeJar jar1 = new ChangeJar(2,2,2,2);
+		assertEquals("2 quarters, 2 dimes, 2 nickels, 2 pennies", jar1.toString());
+	}
+
+	// Testing toString will a single quarter
+	@Test
+	public void testToStringSingleQuarter(){
+		ChangeJar jar1 = new ChangeJar(1,2,2,2);
+		assertEquals("1 quarter, 2 dimes, 2 nickels, 2 pennies", jar1.toString());
+	}
+
+	// Testing toString will a single dime
+	@Test
+	public void testToStringSingleDimes(){
+		ChangeJar jar1 = new ChangeJar(2,1,2,2);
+		assertEquals("2 quarters, 1 dime, 2 nickels, 2 pennies", jar1.toString());
+	}
+
+	// Testing toString will a single nickel
+	@Test
+	public void testToStringSingleNickel(){
+		ChangeJar jar1 = new ChangeJar(2,2,1,2);
+		assertEquals("2 quarters, 2 dimes, 1 nickel, 2 pennies", jar1.toString());
+	}
+
+	// Testing toString will a single penny
+	@Test
+	public void testToStringSinglePenny(){
+		ChangeJar jar1 = new ChangeJar(2,2,2,1);
+		assertEquals("2 quarters, 2 dimes, 2 nickels, 1 penny", jar1.toString());
+	}
+
+	// Testing toString will a singular change
+	@Test
+	public void testToStringAllSingular(){
+		ChangeJar jar1 = new ChangeJar(1,1,1,1);
+		assertEquals("1 quarter, 1 dime, 1 nickel, 1 penny", jar1.toString());
+	}
+
 	// testing valid takeOut with wide range of
 	// quarters, dimes, nickels, pennies
 	@Test
@@ -120,6 +162,22 @@ public class ChangeJarTest {
 		assertEquals (2, jar2.getDimes());
 		assertEquals (0, jar2.getNickels());
 		assertEquals (2, jar2.getPennies());
+	}
+
+	// Testing takeOut with the exact same amount
+	@Test
+	public void testTakeOutExact(){
+		ChangeJar jar1 = new ChangeJar(5,0,1,4);
+		ChangeJar jar2 = jar1.takeOut(1.34);
+		assertEquals(5,jar2.getQuarters());
+		assertEquals(0,jar2.getDimes());
+		assertEquals(1,jar2.getNickels());
+		assertEquals(4,jar2.getPennies());
+
+		assertEquals(0,jar1.getQuarters());
+		assertEquals(0,jar1.getDimes());
+		assertEquals(0,jar1.getNickels());
+		assertEquals(0,jar1.getPennies());
 	}
 
 	// Testing takeOut method with too many numbers beyond the decimal
@@ -380,6 +438,66 @@ public class ChangeJarTest {
 		new ChangeJar(0,0,0,-300);
 	}
 
+	// Testing negative number of quarters for setter
+	@Test(expected = IllegalArgumentException.class)
+	public void testSetQuartersNegative(){
+		ChangeJar jar = new ChangeJar();
+		jar.setQuarters(-1);
+	}
+
+	// Testing negative number of dimes for setter
+	@Test(expected = IllegalArgumentException.class)
+	public void testSetDimesNegative(){
+		ChangeJar jar = new ChangeJar();
+		jar.setDimes(-1);
+	}
+
+	// Testing negative number of nickels for setter
+	@Test(expected = IllegalArgumentException.class)
+	public void testSetNickelsNegative(){
+		ChangeJar jar = new ChangeJar();
+		jar.setNickels(-1);
+	}
+
+	// Testing negative number of pennies for setter
+	@Test(expected = IllegalArgumentException.class)
+	public void testSetPenniesNegative(){
+		ChangeJar jar = new ChangeJar();
+		jar.setPennies(-1);
+	}
+
+	// Testing setter for quarters
+	@Test
+	public void testSetQuarters(){
+		ChangeJar jar = new ChangeJar();
+		jar.setQuarters(1);
+		assertEquals(1,jar.getQuarters());
+	}
+
+	// Testing setter for dimes
+	@Test
+	public void testSetDimes(){
+		ChangeJar jar = new ChangeJar();
+		jar.setDimes(1);
+		assertEquals(1,jar.getDimes());
+	}
+
+	// Testing setter for pennies
+	@Test
+	public void testSetNickels(){
+		ChangeJar jar = new ChangeJar();
+		jar.setNickels(1);
+		assertEquals(1,jar.getNickels());
+	}
+
+	// Testing setter for pennies
+	@Test
+	public void testSetPennies(){
+		ChangeJar jar = new ChangeJar();
+		jar.setPennies(1);
+		assertEquals(1,jar.getPennies());
+	}
+
 	// Testing takeOut when mutation is off
 	@Test
 	public void testMutationOffTakeOut() {
@@ -408,7 +526,7 @@ public class ChangeJarTest {
 	}
 
 	// Testing takeOut when mutation is off
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testMutationOffTakeOut3() {
 		ChangeJar.mutate(false);
 		ChangeJar test = new ChangeJar(1,2,3,4);

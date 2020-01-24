@@ -18,8 +18,9 @@ public class ChangeJarPanel extends JPanel{
     private ChangeJar jar;
 
     NumberFormat fmt = NumberFormat.getCurrencyInstance();
-    JButton takeOutButton, decButton, addButton, incButton, saveButton, loadButton;
-    JTextField qField, dField, nField, pField, fileField;
+    JButton takeOutButton, decButton, addButton, incButton, saveButton, loadButton, compareButton, equalButton,
+            takeOutButton2;
+    JTextField qField, dField, nField, pField, fileField, amountField;
 
     /** labels for message and credits */
     JLabel message, credits;
@@ -30,7 +31,7 @@ public class ChangeJarPanel extends JPanel{
         jar = new ChangeJar(100,2,3,4);
 
         // set the layout to GridBag
-        setLayout(new GridLayout(9,2));
+        setLayout(new GridLayout(13,2));
         setBackground(Color.lightGray);
 
         // get Die #2 from game and place on ChangeJarGUI
@@ -62,12 +63,6 @@ public class ChangeJarPanel extends JPanel{
         incButton = new JButton("Increment");
         add(incButton);
 
-        credits = new JLabel();
-        credits.setText(fmt.format(jar.getAmount()));
-        //add (new JLabel(" "));
-        add(new JLabel("Total:"));
-        add(credits);
-
         fileField = new JTextField(".txt", 3);
         add(fileField);
         add(new JLabel("Filename:"));
@@ -78,13 +73,38 @@ public class ChangeJarPanel extends JPanel{
         loadButton = new JButton("Load");
         add(loadButton);
 
-        // register the listeners
+        amountField = new JTextField("0.00",3);
+        add(amountField);
+        add(new JLabel("Amount:"));
+
+        compareButton = new JButton("Compare");
+        add(compareButton);
+
+        equalButton = new JButton("Equate");
+        add(equalButton);
+
+        takeOutButton2 = new JButton("Take Out");
+        add(takeOutButton2);
+
+        add (new JLabel(" "));
+        message = new JLabel("");
+        add(message);
+
+        add(new JLabel(""));
+        credits = new JLabel();
+        credits.setText(fmt.format(jar.getAmount()));
+        add(new JLabel("Total:"));
+        add(credits);
+
         takeOutButton.addActionListener(new ButtonListener());
         decButton.addActionListener(new ButtonListener());
         addButton.addActionListener(new ButtonListener());
         incButton.addActionListener(new ButtonListener());
         saveButton.addActionListener(new ButtonListener());
         loadButton.addActionListener(new ButtonListener());
+        compareButton.addActionListener(new ButtonListener());
+        equalButton.addActionListener(new ButtonListener());
+        takeOutButton2.addActionListener(new ButtonListener());
     }
 
 
@@ -110,6 +130,7 @@ public class ChangeJarPanel extends JPanel{
                 }catch(IllegalArgumentException e){
                     JOptionPane.showMessageDialog(null,"Not enough specified coins for this operation");
                 }
+                message.setText("");
             }
             if(event.getSource() == decButton){
                 try{
@@ -118,6 +139,7 @@ public class ChangeJarPanel extends JPanel{
                 catch (IllegalArgumentException e){
                     JOptionPane.showMessageDialog(null, "No more pennies to take out");
                 }
+                message.setText("");
             }
             if(event.getSource() == addButton){
                 try {
@@ -130,23 +152,67 @@ public class ChangeJarPanel extends JPanel{
                 catch(NumberFormatException io){
                     JOptionPane.showMessageDialog(null,"Enter an integer in all fields");
                 }
+                message.setText("");
             }
 
             if(event.getSource() == incButton){
                 jar.inc();
+                message.setText("");
             }
 
             if(event.getSource() == saveButton){
                 jar.save(fileField.getText());
+                message.setText("");
             }
 
             if(event.getSource() == loadButton){
-//                try {
+                try {
                     jar.load(fileField.getText());
-//                }
-//                catch(FileNotFoundException o){
-//                    JOptionPane.showMessageDialog(null, "Unable to find file");
-//                }
+                }
+                catch(IllegalArgumentException i){
+                    JOptionPane.showMessageDialog(null, "Unable to load file");
+                }
+                message.setText("");
+            }
+            if(event.getSource() == compareButton) {
+                try {
+                    ChangeJar t = new ChangeJar(amountField.getText());
+                    int result = jar.compareTo(t);
+                    if(result == 1)
+                        message.setText("Jar is greater");
+                    else if(result == -1)
+                        message.setText("Jar is lesser");
+                    else
+                        message.setText("Jar is equal to");
+                }
+                catch(IllegalArgumentException i){
+                    JOptionPane.showMessageDialog(null, "Amount entered not valid");
+                }
+            }
+
+            if(event.getSource() == equalButton) {
+                try {
+                    ChangeJar t = new ChangeJar(amountField.getText());
+                    if(jar.equals(t))
+                        message.setText("Jar is equal to");
+                    else
+                        message.setText("Jar is not equal to");
+                }
+                catch(IllegalArgumentException i){
+                    JOptionPane.showMessageDialog(null, "Amount entered not valid");
+                }
+            }
+
+            if(event.getSource() == takeOutButton2) {
+                try {
+                    double doubleAmount = Double.parseDouble(amountField.getText());
+                    ChangeJar t = jar.takeOut(doubleAmount);
+
+                }
+                catch(IllegalArgumentException i){
+                    JOptionPane.showMessageDialog(null, "Unable to take out amount");
+                }
+                message.setText("");
             }
             // update the labels
             credits.setText(fmt.format(jar.getAmount()));
