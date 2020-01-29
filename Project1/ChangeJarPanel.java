@@ -19,7 +19,7 @@ public class ChangeJarPanel extends JPanel{
 
     NumberFormat fmt = NumberFormat.getCurrencyInstance();
     JButton takeOutButton, decButton, addButton, incButton, saveButton, loadButton, compareButton, equalButton,
-            takeOutButton2;
+            takeOutButton2, stringButton;
     JTextField qField, dField, nField, pField, fileField, amountField;
 
     /** labels for message and credits */
@@ -29,6 +29,7 @@ public class ChangeJarPanel extends JPanel{
 
         // create the game object as well as the ChangeJarGUI Frame
         jar = new ChangeJar(100,2,3,4);
+       new ChangeJar(100,2,3,4);
 
         // set the layout to GridBag
         setLayout(new GridLayout(13,2));
@@ -176,8 +177,7 @@ public class ChangeJarPanel extends JPanel{
             }
             if(event.getSource() == compareButton) {
                 try {
-                    ChangeJar t = new ChangeJar(amountField.getText());
-                    int result = jar.compareTo(t);
+                    int result = jar.compareTo(ChangeJarPanelMain.staticJar);
                     if(result == 1)
                         message.setText("Jar is greater");
                     else if(result == -1)
@@ -192,8 +192,7 @@ public class ChangeJarPanel extends JPanel{
 
             if(event.getSource() == equalButton) {
                 try {
-                    ChangeJar t = new ChangeJar(amountField.getText());
-                    if(jar.equals(t))
+                    if(jar.equals(ChangeJarPanelMain.staticJar))
                         message.setText("Jar is equal to");
                     else
                         message.setText("Jar is not equal to");

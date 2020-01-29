@@ -2,6 +2,8 @@ package Project1;
 
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
+
 import static org.junit.Assert.*;
 
 public class ChangeJarTest {
@@ -79,6 +81,12 @@ public class ChangeJarTest {
 	@Test (expected = IllegalArgumentException.class)
 	public void testStringConstructorTooManyDecimals() {
 		ChangeJar test = new ChangeJar("1.3.4");
+	}
+
+	// Testing the constructor that takes a string with only a decimal at the end
+	@Test (expected = IllegalArgumentException.class)
+	public void testStringConstructorEndWithDecimal() {
+		ChangeJar test = new ChangeJar("500.");
 	}
 
 	// Testing the constructor that takes a double with a negative amount
@@ -164,6 +172,22 @@ public class ChangeJarTest {
 		assertEquals (2, jar2.getPennies());
 	}
 
+	// Testing takeOut with a funky amount/change
+	@Test
+	public void testTakeOut3(){
+		ChangeJar jar1 = new ChangeJar(5,15,0,0);
+		ChangeJar jar2 = jar1.takeOut(0.80);
+		assertEquals(3, jar1.getQuarters());
+		assertEquals(12, jar1.getDimes());
+		assertEquals(0, jar1.getNickels());
+		assertEquals(0, jar1.getPennies());
+
+		assertEquals(2, jar2.getQuarters());
+		assertEquals(3, jar2.getDimes());
+		assertEquals(0, jar2.getNickels());
+		assertEquals(0, jar2.getPennies());
+	}
+
 	// Testing takeOut with the exact same amount
 	@Test
 	public void testTakeOutExact(){
@@ -195,10 +219,11 @@ public class ChangeJarTest {
 	}
 
 	// Testing takeOut method where it is impossible to take out the exact amount
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testTakeOutImpossibleAmount() {
 		ChangeJar jar1 = new ChangeJar(100, 0, 0, 0);
 		ChangeJar jar2 = jar1.takeOut(0.05);
+		assertEquals(null, jar2);
 	}
 
 	// Testing standard decrement
@@ -324,7 +349,40 @@ public class ChangeJarTest {
 		assertTrue(jar1.equals(jar2));
 	}
 
-	// IMPORTANT: only one test per exception!!!
+	// Attempting to save with unacceptable characters
+	@Test (expected = NullPointerException.class)
+	public void testSaveIllegalCharacters(){
+		ChangeJar test = new ChangeJar(1,2,3,4);
+		test.save("|/*?.txt");
+	}
+
+	// Attempting to load a pre-existing file with negative numbers in it
+	@Test (expected = IllegalArgumentException.class)
+	public void testLoadNegatives(){
+		ChangeJar test = new ChangeJar();
+		test.load("negatives.txt");
+	}
+
+	// Attempting to load a pre-existing file with letters in it
+	@Test (expected = IllegalArgumentException.class)
+	public void testLoadLetters(){
+		ChangeJar test = new ChangeJar();
+		test.load("letters.txt");
+	}
+
+	// Attempting to load a pre-existing file with nothing in it
+	@Test (expected = IllegalArgumentException.class)
+	public void testLoadEmpty(){
+		ChangeJar test = new ChangeJar();
+		test.load("empty.txt");
+	}
+
+	// Attempting to load a non-existent file
+	@Test (expected = NullPointerException.class)
+	public void testLoadNoFile(){
+		ChangeJar test = new ChangeJar();
+		test.load("asdafsdfdsg");
+	}
 
 	// testing negative numbers for pennies in takeOut
 	@Test(expected = IllegalArgumentException.class)
@@ -626,5 +684,12 @@ public class ChangeJarTest {
 		assertEquals(0, test.getPennies());
 		ChangeJar.mutate(true);
 	}
+
+	// Testing custom method getMutationStatus
+	@Test
+	public void testGetMutationStatus(){
+		assertEquals(true, ChangeJar.getMutationStatus());
+	}
+
 
 }

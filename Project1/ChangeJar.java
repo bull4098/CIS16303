@@ -105,6 +105,10 @@ public class ChangeJar {
         if(amount.contains(".") && amount.length() - amount.indexOf('.') > 3)
             throw new IllegalArgumentException();
 
+        //Throws an error if there is a decimal point right at the end of the string
+        if(amount.contains(".") && amount.indexOf('.') == amount.length() - 1)
+            throw new IllegalArgumentException();
+
         int temp = (int) (Double.parseDouble(amount) * 100);
         this.convertToChange(temp);
     }
@@ -315,9 +319,8 @@ public class ChangeJar {
                             }
                         }
         }
-        else
-            return null;
-        throw new IllegalArgumentException();
+        //If mutation is off, null is returned or if it is impossible to get the amount.
+        return null;
     }
 
     /******************************************************************
@@ -423,6 +426,7 @@ public class ChangeJar {
     /******************************************************************
      *   Loads the data of a previously saved Jar
      * @param fileName is the name of the file being loaded from
+     * @throws IllegalFormatCodePointException if there are no ints ar they are negative
      */
     public void load(String fileName) {
         Scanner scanner = null;
@@ -431,17 +435,24 @@ public class ChangeJar {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        int tempQuarters = scanner.nextInt();
-        int tempDimes = scanner.nextInt();
-        int tempNickels = scanner.nextInt();
-        int tempPennies = scanner.nextInt();
-        //Need to test to make sure the values didn't somehow become negative
-        changeCheck(tempQuarters, tempDimes, tempNickels, tempPennies);
-        quarters = tempQuarters;
-        dimes = tempDimes;
-        nickels = tempNickels;
-        pennies = tempPennies;
 
+        //Tries to find ints in the file but throws an IllegalArgumentException if there are none.
+        try {
+            int tempQuarters = scanner.nextInt();
+            int tempDimes = scanner.nextInt();
+            int tempNickels = scanner.nextInt();
+            int tempPennies = scanner.nextInt();
+
+            //Need to test to make sure the values didn't somehow become negative
+            changeCheck(tempQuarters, tempDimes, tempNickels, tempPennies);
+            quarters = tempQuarters;
+            dimes = tempDimes;
+            nickels = tempNickels;
+            pennies = tempPennies;
+        }
+        catch(NoSuchElementException e) {
+            throw new IllegalArgumentException();
+        }
     }
 
     /******************************************************************
@@ -525,76 +536,78 @@ public class ChangeJar {
     }
 
     /******************************************************************
-     *
+     *   Returns status of mutation (primarily used to help with GUI)
      * @return whether mutation is true (on) or false (off)
      */
     public static boolean getMutationStatus(){
         return mutation;
     }
 
-    public static void main(String[] args) {
-        System.out.println("Testing initialized...");
-        int errors = 0;
-        ChangeJar jar1 = new ChangeJar();
-        if(jar1.getQuarters() != 0 || jar1.getDimes() != 0 || jar1.getNickels() != 0 || jar1.getPennies() != 0) {
-            System.out.println("ERROR");
-            errors++;
-        }
-
-        jar1 = new ChangeJar(1,1,1,1);
-        if(jar1.getQuarters() != 1 || jar1.getDimes() != 1 || jar1.getNickels() != 1 || jar1.getPennies() != 1) {
-            System.out.println("ERROR");
-            errors++;
-        }
-
-        jar1 = new ChangeJar("1.34");
-        if(jar1.getQuarters() != 5 || jar1.getDimes() != 0 || jar1.getNickels() != 1 || jar1.getPennies() != 4) {
-            System.out.println("ERROR");
-            errors++;
-        }
-
-        ChangeJar jar2 = new ChangeJar(1.34);
-        if(!jar1.equals(jar2)){
-            System.out.println("ERROR");
-            errors++;
-        }
-
-        jar2 = new ChangeJar(0,0,0,1);
-        if(ChangeJar.compareTo(jar1,jar2) != 1) {
-            System.out.println("ERROR");
-            errors++;
-        }
-
-        jar1= new ChangeJar(10,10,10,10);
-        jar1.takeOut(jar2);
-        if(jar1.getPennies() != 9){
-            System.out.println("ERROR");
-            errors++;
-        }
-
-        jar1.inc();
-        if(jar1.getPennies() != 10){
-            System.out.println("ERROR");
-            errors++;
-        }
-
-        jar1.add(5,5,5,5);
-        if(jar1.getQuarters() != 15 || jar1.getDimes() != 15 || jar1.getNickels() != 15 || jar1.getPennies() != 15){
-            System.out.println("ERROR");
-            errors++;
-        }
-
-        jar1.save("test.txt");
-        jar1 = new ChangeJar();
-        jar1.load("test.txt");
-        if(jar1.getQuarters() != 15 || jar1.getDimes() != 15 || jar1.getNickels() != 15 || jar1.getPennies() != 15){
-            System.out.println("ERROR");
-            errors++;
-        }
-
-        System.out.println("Testing finalized... encountered " + errors + " errors");
-
-    }
+//    public static void main(String[] args) {
+//        //Page and a half
+//
+//        System.out.println("Testing initialized...");
+//        int errors = 0;
+//        ChangeJar jar1 = new ChangeJar();
+//        if(jar1.getQuarters() != 0 || jar1.getDimes() != 0 || jar1.getNickels() != 0 || jar1.getPennies() != 0) {
+//            System.out.println("ERROR");
+//            errors++;
+//        }
+//
+//        jar1 = new ChangeJar(1,1,1,1);
+//        if(jar1.getQuarters() != 1 || jar1.getDimes() != 1 || jar1.getNickels() != 1 || jar1.getPennies() != 1) {
+//            System.out.println("ERROR");
+//            errors++;
+//        }
+//
+//        jar1 = new ChangeJar("1.34");
+//        if(jar1.getQuarters() != 5 || jar1.getDimes() != 0 || jar1.getNickels() != 1 || jar1.getPennies() != 4) {
+//            System.out.println("ERROR");
+//            errors++;
+//        }
+//
+//        ChangeJar jar2 = new ChangeJar(1.34);
+//        if(!jar1.equals(jar2)){
+//            System.out.println("ERROR");
+//            errors++;
+//        }
+//
+//        jar2 = new ChangeJar(0,0,0,1);
+//        if(ChangeJar.compareTo(jar1,jar2) != 1) {
+//            System.out.println("ERROR");
+//            errors++;
+//        }
+//
+//        jar1= new ChangeJar(10,10,10,10);
+//        jar1.takeOut(jar2);
+//        if(jar1.getPennies() != 9){
+//            System.out.println("ERROR");
+//            errors++;
+//        }
+//
+//        jar1.inc();
+//        if(jar1.getPennies() != 10){
+//            System.out.println("ERROR");
+//            errors++;
+//        }
+//
+//        jar1.add(5,5,5,5);
+//        if(jar1.getQuarters() != 15 || jar1.getDimes() != 15 || jar1.getNickels() != 15 || jar1.getPennies() != 15){
+//            System.out.println("ERROR");
+//            errors++;
+//        }
+//
+//        jar1.save("test.txt");
+//        jar1 = new ChangeJar();
+//        jar1.load("test.txt");
+//        if(jar1.getQuarters() != 15 || jar1.getDimes() != 15 || jar1.getNickels() != 15 || jar1.getPennies() != 15){
+//            System.out.println("ERROR");
+//            errors++;
+//        }
+//
+//        System.out.println("Testing finalized... encountered " + errors + " errors");
+//
+//    }
 
 
 }

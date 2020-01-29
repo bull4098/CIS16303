@@ -4,14 +4,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 
 
 public class ChangeJarPanelMain extends JPanel {
 
 	private JButton mutateButton;
-	private JLabel mutateOnOff;
 	private JMenuItem quitItem;
 	private JMenuItem suspendItem;
+	public static ChangeJar staticJar = new ChangeJar(100,2,3,4);
+	NumberFormat fmt = NumberFormat.getCurrencyInstance();
 
 	public ChangeJarPanelMain (JMenuItem quitItem, JMenuItem suspendItem) {
 
@@ -21,16 +23,11 @@ public class ChangeJarPanelMain extends JPanel {
 		panel.add(new ChangeJarPanel());
 		add(panel);
 
-		mutateButton = new JButton("Mutation on/off Switch");
+		mutateButton = new JButton("Mutation On");
 		add(mutateButton);
 
-		add(new JLabel("Mutation: "));
-		mutateOnOff = new JLabel();
-		add(mutateOnOff);
-		if(ChangeJar.getMutationStatus())
-			mutateOnOff.setText("On");
-		else
-			mutateOnOff.setText("Off");
+		add(new JLabel("Static Jar: " + fmt.format(staticJar.getAmount())));
+
 
 		this.quitItem = quitItem;
 		this.suspendItem = suspendItem;
@@ -51,9 +48,9 @@ public class ChangeJarPanelMain extends JPanel {
 			if(e.getSource() == mutateButton){
 				ChangeJar.mutate(!ChangeJar.getMutationStatus());
 				if(ChangeJar.getMutationStatus())
-					mutateOnOff.setText("On");
+					mutateButton.setText("Mutation On");
 				else
-					mutateOnOff.setText("Off");
+					mutateButton.setText("Mutation Off");
 			}
 		}
 
