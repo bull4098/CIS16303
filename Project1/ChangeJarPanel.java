@@ -19,7 +19,7 @@ public class ChangeJarPanel extends JPanel{
 
     NumberFormat fmt = NumberFormat.getCurrencyInstance();
     JButton takeOutButton, decButton, addButton, incButton, saveButton, loadButton, compareButton, equalButton,
-            takeOutButton2, stringButton;
+            takeOutButton2, stringButton, createButton, createButton2;
     JTextField qField, dField, nField, pField, fileField, amountField;
 
     /** labels for message and credits */
@@ -32,7 +32,7 @@ public class ChangeJarPanel extends JPanel{
        new ChangeJar(100,2,3,4);
 
         // set the layout to GridBag
-        setLayout(new GridLayout(13,2));
+        setLayout(new GridLayout(14,2));
         setBackground(Color.lightGray);
 
         // get Die #2 from game and place on ChangeJarGUI
@@ -64,6 +64,18 @@ public class ChangeJarPanel extends JPanel{
         incButton = new JButton("Increment");
         add(incButton);
 
+        compareButton = new JButton("Compare");
+        add(compareButton);
+
+        equalButton = new JButton("Equate");
+        add(equalButton);
+
+        stringButton = new JButton("String");
+        add(stringButton);
+
+        createButton = new JButton("Create");
+        add(createButton);
+
         fileField = new JTextField(".txt", 3);
         add(fileField);
         add(new JLabel("Filename:"));
@@ -78,16 +90,13 @@ public class ChangeJarPanel extends JPanel{
         add(amountField);
         add(new JLabel("Amount:"));
 
-        compareButton = new JButton("Compare");
-        add(compareButton);
-
-        equalButton = new JButton("Equate");
-        add(equalButton);
-
         takeOutButton2 = new JButton("Take Out");
         add(takeOutButton2);
 
-        add (new JLabel(" "));
+        createButton2 = new JButton("Create");
+        add(createButton2);
+
+        //add (new JLabel(" "));
         message = new JLabel("");
         add(message);
 
@@ -106,6 +115,9 @@ public class ChangeJarPanel extends JPanel{
         compareButton.addActionListener(new ButtonListener());
         equalButton.addActionListener(new ButtonListener());
         takeOutButton2.addActionListener(new ButtonListener());
+        stringButton.addActionListener(new ButtonListener());
+        createButton.addActionListener(new ButtonListener());
+        createButton2.addActionListener(new ButtonListener());
     }
 
 
@@ -162,7 +174,12 @@ public class ChangeJarPanel extends JPanel{
             }
 
             if(event.getSource() == saveButton){
-                jar.save(fileField.getText());
+                try {
+                    jar.save(fileField.getText());
+                }
+                catch(NullPointerException e){
+                    JOptionPane.showMessageDialog(null, "Unable to save with that name");
+                }
                 message.setText("");
             }
 
@@ -172,6 +189,9 @@ public class ChangeJarPanel extends JPanel{
                 }
                 catch(IllegalArgumentException i){
                     JOptionPane.showMessageDialog(null, "Unable to load file");
+                }
+                catch(NullPointerException e){
+                    JOptionPane.showMessageDialog(null,"Unable to find file");
                 }
                 message.setText("");
             }
@@ -205,7 +225,9 @@ public class ChangeJarPanel extends JPanel{
             if(event.getSource() == takeOutButton2) {
                 try {
                     double doubleAmount = Double.parseDouble(amountField.getText());
-                    ChangeJar t = jar.takeOut(doubleAmount);
+                    if(jar.takeOut(doubleAmount) == null){
+                        JOptionPane.showMessageDialog(null, "Unable to take out amount");
+                    }
 
                 }
                 catch(IllegalArgumentException i){
@@ -213,7 +235,38 @@ public class ChangeJarPanel extends JPanel{
                 }
                 message.setText("");
             }
-            // update the labels
+
+            if(event.getSource() == stringButton){
+                message.setText(jar.toString());
+            }
+
+            if(event.getSource() == createButton){
+                try{
+                    quarters = Integer.parseInt(qField.getText());
+                    dimes = Integer.parseInt(dField.getText());
+                    nickels = Integer.parseInt(nField.getText());
+                    pennies = Integer.parseInt(pField.getText());
+                    jar = new ChangeJar(quarters,dimes,nickels,pennies);
+                }
+                catch(IllegalArgumentException e){
+                    JOptionPane.showMessageDialog(null, "Unable to create jar with" +
+                            " that change");
+                }
+                message.setText("");
+            }
+
+            if(event.getSource() == createButton2){
+                try{
+                    jar = new ChangeJar(amountField.getText());
+                }
+
+                catch(IllegalArgumentException e){
+                    JOptionPane.showMessageDialog(null, "Unable to create jar with" +
+                            " that amount");
+                }
+                message.setText("");
+            }
+
             credits.setText(fmt.format(jar.getAmount()));
         }
 
