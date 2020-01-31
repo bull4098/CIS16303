@@ -9,7 +9,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.text.NumberFormat;
 
 /**
- * Write a description of class ChangeJarPanel here.
+ * Creates a panel that calls various methods from the ChangeJar class
  *
  * @author Roger Ferguson
  */
@@ -18,8 +18,9 @@ public class ChangeJarPanel extends JPanel{
     private ChangeJar jar;
 
     NumberFormat fmt = NumberFormat.getCurrencyInstance();
-    JButton takeOutButton, decButton, addButton, incButton, saveButton, loadButton, compareButton, equalButton,
-            takeOutButton2, stringButton, createButton, createButton2;
+    JButton takeOutButton, decButton, addButton, incButton, saveButton,
+     loadButton, compareButton, equalButton, takeOutButton2, stringButton,
+     createButton, createButton2;
     JTextField qField, dField, nField, pField, fileField, amountField;
 
     /** labels for message and credits */
@@ -35,7 +36,6 @@ public class ChangeJarPanel extends JPanel{
         setLayout(new GridLayout(14,2));
         setBackground(Color.lightGray);
 
-        // get Die #2 from game and place on ChangeJarGUI
         qField = new JTextField("0", 3);
         add(qField);
         add(new JLabel("Quarters:"));
@@ -122,7 +122,7 @@ public class ChangeJarPanel extends JPanel{
 
 
     /****************************************************************
-     Inner class to repond to the user action
+     Inner class to respond to the user action
 
      ****************************************************************/
     private class ButtonListener implements ActionListener{
@@ -139,9 +139,11 @@ public class ChangeJarPanel extends JPanel{
                     pennies = Integer.parseInt(pField.getText());
                     jar.takeOut(quarters,dimes,nickels,pennies);
                 }catch(NumberFormatException io){
-                    JOptionPane.showMessageDialog(null,"Enter an integer in all fields");
+                    JOptionPane.showMessageDialog(null,
+                            "Enter an integer in all fields");
                 }catch(IllegalArgumentException e){
-                    JOptionPane.showMessageDialog(null,"Not enough specified coins for this operation");
+                    JOptionPane.showMessageDialog(null,
+                            "Not enough specified coins for this operation");
                 }
                 message.setText("");
             }
@@ -150,7 +152,8 @@ public class ChangeJarPanel extends JPanel{
                     jar.dec();
                 }
                 catch (IllegalArgumentException e){
-                    JOptionPane.showMessageDialog(null, "No more pennies to take out");
+                    JOptionPane.showMessageDialog(null,
+                            "No more pennies to take out");
                 }
                 message.setText("");
             }
@@ -163,7 +166,8 @@ public class ChangeJarPanel extends JPanel{
                     jar.add(quarters, dimes, nickels, pennies);
                 }
                 catch(NumberFormatException io){
-                    JOptionPane.showMessageDialog(null,"Enter an integer in all fields");
+                    JOptionPane.showMessageDialog(null,
+                            "Enter an integer in all fields");
                 }
                 message.setText("");
             }
@@ -178,7 +182,8 @@ public class ChangeJarPanel extends JPanel{
                     jar.save(fileField.getText());
                 }
                 catch(NullPointerException e){
-                    JOptionPane.showMessageDialog(null, "Unable to save with that name");
+                    JOptionPane.showMessageDialog(null,
+                            "Unable to save with that name");
                 }
                 message.setText("");
             }
@@ -188,10 +193,12 @@ public class ChangeJarPanel extends JPanel{
                     jar.load(fileField.getText());
                 }
                 catch(IllegalArgumentException i){
-                    JOptionPane.showMessageDialog(null, "Unable to load file");
+                    JOptionPane.showMessageDialog(null,
+                            "Unable to load file");
                 }
                 catch(NullPointerException e){
-                    JOptionPane.showMessageDialog(null,"Unable to find file");
+                    JOptionPane.showMessageDialog(null,
+                            "Unable to find file");
                 }
                 message.setText("");
             }
@@ -206,7 +213,8 @@ public class ChangeJarPanel extends JPanel{
                         message.setText("Jar is equal to");
                 }
                 catch(IllegalArgumentException i){
-                    JOptionPane.showMessageDialog(null, "Amount entered not valid");
+                    JOptionPane.showMessageDialog(null,
+                            "Amount entered not valid");
                 }
             }
 
@@ -218,7 +226,8 @@ public class ChangeJarPanel extends JPanel{
                         message.setText("Jar is not equal to");
                 }
                 catch(IllegalArgumentException i){
-                    JOptionPane.showMessageDialog(null, "Amount entered not valid");
+                    JOptionPane.showMessageDialog(null,
+                            "Amount entered not valid");
                 }
             }
 
@@ -226,12 +235,14 @@ public class ChangeJarPanel extends JPanel{
                 try {
                     double doubleAmount = Double.parseDouble(amountField.getText());
                     if(jar.takeOut(doubleAmount) == null){
-                        JOptionPane.showMessageDialog(null, "Unable to take out amount");
+                        JOptionPane.showMessageDialog(null,
+                                "Unable to take out amount");
                     }
 
                 }
                 catch(IllegalArgumentException i){
-                    JOptionPane.showMessageDialog(null, "Unable to take out amount");
+                    JOptionPane.showMessageDialog(null,
+                            "Unable to take out amount");
                 }
                 message.setText("");
             }
@@ -249,8 +260,8 @@ public class ChangeJarPanel extends JPanel{
                     jar = new ChangeJar(quarters,dimes,nickels,pennies);
                 }
                 catch(IllegalArgumentException e){
-                    JOptionPane.showMessageDialog(null, "Unable to create jar with" +
-                            " that change");
+                    JOptionPane.showMessageDialog(null,
+                            "Unable to create jar with that change");
                 }
                 message.setText("");
             }
@@ -261,14 +272,13 @@ public class ChangeJarPanel extends JPanel{
                 }
 
                 catch(IllegalArgumentException e){
-                    JOptionPane.showMessageDialog(null, "Unable to create jar with" +
-                            " that amount");
+                    JOptionPane.showMessageDialog(null,
+                            "Unable to create jar with that amount");
                 }
                 message.setText("");
             }
 
             credits.setText(fmt.format(jar.getAmount()));
         }
-
     }
 }

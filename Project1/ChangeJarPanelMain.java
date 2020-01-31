@@ -12,6 +12,7 @@ public class ChangeJarPanelMain extends JPanel {
 	private JButton mutateButton;
 	private JMenuItem quitItem;
 	private JMenuItem suspendItem;
+
 	public static ChangeJar staticJar = new ChangeJar(100,2,3,4);
 	NumberFormat fmt = NumberFormat.getCurrencyInstance();
 
@@ -53,6 +54,5 @@ public class ChangeJarPanelMain extends JPanel {
 					mutateButton.setText("Mutation Off");
 			}
 		}
-
 	}
 }

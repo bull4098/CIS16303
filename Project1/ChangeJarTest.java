@@ -8,11 +8,8 @@ import static org.junit.Assert.*;
 
 public class ChangeJarTest {
 
-	/**
-	 *  Your assignment is to write many more test cases to
-	 *  have a robust testing, more than just 100% coverage.
-	 *
-	 *  Some examples are provided to help you get started
+	/******************************************************************
+	 *  Tests the ChangeJar class and its methods
 	 */
 
 
@@ -47,6 +44,18 @@ public class ChangeJarTest {
 		assertEquals(0, test.getDimes());
 		assertEquals(1, test.getNickels());
 		assertEquals(4, test.getPennies());
+
+		test = new ChangeJar(.55);
+		assertEquals(2, test.getQuarters());
+		assertEquals(0, test.getDimes());
+		assertEquals(1, test.getNickels());
+		assertEquals(0, test.getPennies());
+
+		test = new ChangeJar(2.06);
+		assertEquals(8, test.getQuarters());
+		assertEquals(0, test.getDimes());
+		assertEquals(1, test.getNickels());
+		assertEquals(1, test.getPennies());
 	}
 
 	// Testing the constructor that takes a string
@@ -56,6 +65,18 @@ public class ChangeJarTest {
 		assertEquals(5, test.getQuarters());
 		assertEquals(0, test.getDimes());
 		assertEquals(1, test.getNickels());
+		assertEquals(0, test.getPennies());
+
+		test = new ChangeJar(".24");
+		assertEquals(0, test.getQuarters());
+		assertEquals(2, test.getDimes());
+		assertEquals(0, test.getNickels());
+		assertEquals(4, test.getPennies());
+
+		test = new ChangeJar("10");
+		assertEquals(40, test.getQuarters());
+		assertEquals(0, test.getDimes());
+		assertEquals(0, test.getNickels());
 		assertEquals(0, test.getPennies());
 	}
 
@@ -258,16 +279,14 @@ public class ChangeJarTest {
 	}
 
 	// testing negative number for nickels in takeOut
-	@Test
-			(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testTakeOutNegNickels() {
 		ChangeJar jar1 = new ChangeJar(2,2,2,2);
 		jar1.takeOut(1,1,-1,1);
 	}
 
 	// testing negative number for dimes in takeOut
-	@Test
-			(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testTakeOutNegDimes() {
 		ChangeJar jar1 = new ChangeJar(2,2,2,2);
 		jar1.takeOut(1,-1,1,1);
@@ -703,6 +722,4 @@ public class ChangeJarTest {
 	public void testGetMutationStatus(){
 		assertEquals(true, ChangeJar.getMutationStatus());
 	}
-
-
 }
