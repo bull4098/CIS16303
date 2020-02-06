@@ -9,9 +9,9 @@ import javax.swing.*;
 public class Surround4Panel extends JPanel {
 
     private JButton[][] board;
-
+    private JButton undoButton;
     private JPanel panel1;
-    private int boardSize, numPlayers, startingPlayer, player;
+    private int boardSize, numPlayers, startingPlayer, player, lastRow, lastCol;
     private ButtonListener listen;
     private JMenuItem quitItem, newGameItem;
     private Surround4Game game;
@@ -66,26 +66,79 @@ public class Surround4Panel extends JPanel {
 
         game = new Surround4Game(boardSize,numPlayers,startingPlayer);
         createBoard();
+
+        undoButton = new JButton("Undo");
+        panel1.add(undoButton);
+
         add(panel1, BorderLayout.CENTER);
 
-		quitItem.addActionListener(listen);
-		newGameItem.addActionListener(listen);
+        quitItem.addActionListener(listen);
+        newGameItem.addActionListener(listen);
+        undoButton.addActionListener(listen);
 
-	}
+    }
 
     private class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-			if (e.getSource() == quitItem)
-				System.exit(1);
+            if (e.getSource() == quitItem)
+                System.exit(1);
 
-			if (e.getSource() == newGameItem)
-			    game.reset();
+            if (e.getSource() == newGameItem) {
+                panel1.removeAll();
+                String strBdSize = JOptionPane.showInputDialog(null, "Enter in the size of the board: ");
+                try {
+                    boardSize = Integer.parseInt(strBdSize);
+                    if (boardSize <= 3 || boardSize >= 20) {
+                        //Jumps to catch statement
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException f) {
+                    JOptionPane.showMessageDialog(null, "Invalid input. Using board of size 10.");
+                    boardSize = 10;
+                }
 
-			for (int row = 0; row < board.length; row++)
+                String strNumPlayers = JOptionPane.showInputDialog(null, "Enter the number of players: ");
+                try {
+                    numPlayers = Integer.parseInt(strNumPlayers);
+                    if (numPlayers < 2) {
+                        //Jumps to catch statement
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException f) {
+                    JOptionPane.showMessageDialog(null, "Invalid input. Using 2 players.");
+                    numPlayers = 2;
+                }
+
+                String strStartingPlayer = JOptionPane.showInputDialog(null, "Who starts first?");
+                try {
+                    startingPlayer = Integer.parseInt(strStartingPlayer);
+                    if (startingPlayer < 0 || startingPlayer > numPlayers - 1) {
+                        //Jumps to catch statement
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException f) {
+                    JOptionPane.showMessageDialog(null, "Invalid input. Starting with Player 0.");
+                    startingPlayer = 0;
+                }
+                createBoard();
+                add(panel1, BorderLayout.CENTER);
+                panel1.revalidate();
+                panel1.repaint();
+            }
+
+            if(e.getSource() == undoButton){
+                game.undo(lastRow, lastCol);
+                //FIX ME don't do previous player if undo was already used that turn
+                game.previousPlayer();
+            }
+
+            for (int row = 0; row < board.length; row++)
                 for (int col = 0; col < board[0].length; col++)
                     if (board[row][col] == e.getSource())
                         if (game.select(row, col)) {
                             //		board[row][col].setText(""+game.getCurrentPlayer());
+                            lastRow = row;
+                            lastCol = col;
                             player = game.nextPlayer();
                         } else
                             JOptionPane.showMessageDialog(null, "Not a valid square! Pick again.");
@@ -104,7 +157,7 @@ public class Surround4Panel extends JPanel {
     private void createBoard() {
 
         board = new JButton[boardSize][boardSize];
-        panel1.setLayout(new GridLayout(boardSize,boardSize));
+        panel1.setLayout(new GridLayout(boardSize+1,boardSize));
 
         for (int i = 0; i < boardSize; i++) // rows
             for (int j = 0; j < boardSize; j++) {
@@ -125,8 +178,4 @@ public class Surround4Panel extends JPanel {
                     board[row][col].setText("");
             }
     }
-
-
 }
-
-

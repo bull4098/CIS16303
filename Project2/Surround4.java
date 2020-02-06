@@ -26,8 +26,8 @@ public class Surround4 {
 		fileMenu.add(newGameItem);
 
 		menus = new JMenuBar();
-		menus.add(fileMenu);	
-		
+		menus.add(fileMenu);
+
 		frame.setJMenuBar(menus);
 
 		Surround4Panel panel = new Surround4Panel(quitItem, newGameItem);
